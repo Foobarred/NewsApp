@@ -15,18 +15,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var articles: [Article]? = []
     
     override func viewDidLoad() {
-        super.viewDidLoad()//inherits from super class viewDidLoad
+        super.viewDidLoad()
         
         fetchArticles()
     }
     
     func fetchArticles(){
-        let urlRequest = URLRequest(url: URL(string: "https://newsapi.org/v2/everything?sources=mirror&apiKey=a9ea5ee627044bd98bdfe8daf6543d92")!)//brings in the api
+        let urlRequest = URLRequest(url: URL(string: "https://newsapi.org/v2/everything?sources=bbc-news&apiKey=a9ea5ee627044bd98bdfe8daf6543d92")!)
         
         let task = URLSession.shared.dataTask(with: urlRequest) { (data,response,error) in
             
             if error != nil {
-                print(error!)
+                print(error)
                 return
             }
             
@@ -38,7 +38,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     for articleFromJson in articlesFromJson {
                         let article = Article()
                         if let urlToImage = articleFromJson["urlToImage"] as? String {
-                            article.imageUrl = urlToImage                        }
+                            article.imageUrl = urlToImage
+                        }
                         if (articleFromJson["author"] as? String) != nil{
                             article.author = articleFromJson["author"] as? String ?? "Unknown Author"
                         }
@@ -49,13 +50,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                             article.headline = title
                         }
                         if let url = articleFromJson["url"] as? String{
-                            article.url = url
-                        }
+                            article.url = url                        }
                         self.articles?.append(article)
                     }
                 }
-                DispatchQueue.main.async {//manages execution of work items
-                    self.tableview.reloadData()//reloads the news article in a copy of the cell it used before
+                DispatchQueue.main.async {
+                    self.tableview.reloadData()
                 }
                 
             } catch let error {
@@ -88,10 +88,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.articles?.count ?? 0
     }
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let webVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "web") as! WebviewViewController
+        webVC.url = self.articles?[indexPath.item].url
+        self.present(webVC, animated: true, completion: nil)
+    }
 }
 
-extension UIImageView {//Make an existing type conform to a protocol
+extension UIImageView {
     
     func downloadImage(from url: String){
         
@@ -100,7 +104,7 @@ extension UIImageView {//Make an existing type conform to a protocol
         let task = URLSession.shared.dataTask(with: urlRequest) { (data,response,error) in
             
             if error != nil {
-                print(error!)
+                print(error)
                 return
             }
             
@@ -111,3 +115,4 @@ extension UIImageView {//Make an existing type conform to a protocol
         task.resume()
     }
 }
+

@@ -11,7 +11,7 @@ import UIKit
 class ArticleCell: UITableViewCell {
     
     
-    @IBOutlet weak var imgView: UIImageView!//shows what properties are important to the interface builder
+    @IBOutlet weak var imgView: UIImageView!
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var desc: UILabel!
     @IBOutlet weak var author: UILabel!
